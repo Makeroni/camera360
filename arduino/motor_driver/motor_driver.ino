@@ -11,6 +11,8 @@ String sp_read()
   while (Serial.available() > 0)
   {
     line = line + char(Serial.read());
+    //Add this delay to ensure that all the values are read
+    delay(10);
   }
   return line;
 }
