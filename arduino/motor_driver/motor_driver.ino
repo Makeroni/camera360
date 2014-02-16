@@ -1,5 +1,5 @@
-#define SPEED 32000 // Delay between steps in us
-#define MICROSTEPS 1 // Microsteps in each step
+#define SPEED 8 // Delay between steps in ms
+#define MICROSTEPS 32 // Microsteps in each step
 
 int pin_dir    = 5;
 int pin_step   = 4;
@@ -38,33 +38,39 @@ void loop()
 {
   String msg = sp_read();
 
-  if(msg.indexOf("enable") >= 0)
+  if(msg.indexOf("RQen") >= 0)
   {
+	Serial.println("RQen_srv");
     digitalWrite(pin_enable, HIGH);
     delay(50);
-    Serial.println("enabled");
+    Serial.println("GRen");
     alarm = 1;
   }
 
-  if(msg.indexOf("step") >= 0)
+  if(msg.indexOf("RQstp") >= 0)
   {
+	Serial.println("RQstp_srv");
     msg = msg.substring(5);
     int steps = msg.toInt() * MICROSTEPS;
     for(int i = 0 ; i < steps ; i++)
     {
+//      delayMicroseconds(SPEED*1000/128);
       delayMicroseconds(10);
       digitalWrite(pin_step, HIGH);
+//      delayMicroseconds(SPEED*1000/128);
       delayMicroseconds(10);
       digitalWrite(pin_step, LOW);
-      delayMicroseconds(SPEED);
+      delay(SPEED);
     }
-    Serial.println("stop");
+    alarm = 1; //Si hay actividad la alarma se resetea
+    Serial.println("GRstp");
   }
 
-  if(msg.indexOf("disable") >= 0 || alarm > 6000) // 10 min
+  if(msg.indexOf("RQdis") >= 0 || alarm > 600) // 1 min
   {
+	Serial.println("RQdis_srv");
     digitalWrite(pin_enable, LOW);
-    Serial.println("disabled");
+    Serial.println("GRdis");
     delay(50);
     alarm = 0;
   }

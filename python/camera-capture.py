@@ -81,8 +81,14 @@ f.write('Description: '+desc+'\nImages: '+str(photos)+'\nDate: '+now.strftime('%
 f.close()
 
 # Enable motor driver
-cmd = "enable"
-ser.write(cmd.encode('utf-8'))
+msg = ""
+cmd = "RQen"
+while msg != "RQen_srv\r\n".encode('utf-8'):
+  ser.write(cmd.encode('utf-8'))
+  msg = ser.readline()
+msg = ""
+while msg != "GRen\r\n".encode('utf-8'):
+  msg = ser.readline()
 
 for i in range(photos):
   # Capture photo and wait until finished
@@ -102,13 +108,24 @@ for i in range(photos):
   pic2 = '%03d.jpg'%(i+1,)
   os.rename(pic1, os.path.join(dir, pic2))
   # Rotate motor
-  cmd = "step " + str(round(200/photos))
-  ser.write(cmd.encode('utf-8'))
-  time.sleep(2)
+  msg = ""
+  while msg != "RQstp_srv\r\n".encode('utf-8'):
+    cmd = "RQstp" + str(round(200/photos))
+    ser.write(cmd.encode('utf-8'))
+    msg = ser.readline()
+  msg = ""
+  while msg != "GRstp\r\n".encode('utf-8'):
+    msg = ser.readline()
   
 # Disable motor driver
-cmd = "disable"
-ser.write(cmd.encode('utf-8'))
+msg = ""
+cmd = "RQdis"
+while msg != "RQdis_srv\r\n".encode('utf-8'):
+  ser.write(cmd.encode('utf-8'))
+  msg = ser.readline()
+msg = ""
+while msg != "GRdis\r\n".encode('utf-8'):
+  msg = ser.readline()
 
 # Close serial port
 ser.close()
@@ -118,3 +135,4 @@ sys.stdout.write("\r>> Capture finished\n")
 sys.stdout.write("\r>> ")
 sys.stdout.flush()
 raw_input("")
+
