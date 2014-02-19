@@ -1,0 +1,10 @@
+v0_01
+- Bug detectado - En secuencias de más de 67 fotos se queda colgado el programa después de realizar el giro. 
+v0_02: 
++ Modificados Arduino y Python, ahora Python pasa micropasos a Arduino (minimizamos el error)
++ Ultima rotación corrige el error.
++ Elimino sleep de la captura de la foto. (No es necesario)
++ Añado un retardo de 1 segundo después del giro de la plataforna para dar tiempo a que se estabilice el modelo.
++ Observación: como ahora pasamos micropasos en algún caso se escucha el modulador PWM (no tiene consecuencias).
++ Observación: sigue fallando en capturas mayores de 67. ¿Alguien sabe porqué?
+
